@@ -1,8 +1,7 @@
-// import AppRoutes from "./routes/AppRoutes";
-import Chat from "./features/chat/pages/Chat";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <Chat />;
+  return <AppRoutes />;
 }
 
 export default App;
