@@ -71,7 +71,16 @@
 +│   │   ├── middleware/
 +│   │   │   ├──files
 +│   │   │
-+│   │   ├── features/
++│   │   ├── models/
++│   │   │   ├──files
++│   │   │
++│   │   ├── controllers/
++│   │   │   │
++│   │   │   ├── auth/
++│   │   │   │   
++│   │   │   │
++│   │   │   ├── user/
++│   │   ├── services/
 +│   │   │   │
 +│   │   │   ├── auth/
 +│   │   │   │   

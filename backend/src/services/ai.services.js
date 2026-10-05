@@ -1,4 +1,18 @@
-export const askAI = async (message) => {
+export const askAI = async (messages) => {
+  const systemPrompt = `
+    You are a helpful MERN stack and AI integration tutor.
+
+    Your job is to help the user learn programming
+    and AI integration.
+
+    Rules:
+    - Explain concepts in simple language.
+    - Assume the user is a beginner to intermediate developer.
+    - Give JavaScript examples when useful.
+    - Explain what, why, and how.
+    - Avoid unnecessary complexity.
+  `;
+
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
     {
@@ -14,16 +28,18 @@ export const askAI = async (message) => {
 
         messages: [
           {
-            role: "user",
-            content: message,
+            role: "system",
+            content: systemPrompt,
           },
+
+          ...messages,
         ],
       }),
     }
   );
 
   const data = await response.json();
-  
+
   if (!response.ok) {
     console.error("OpenRouter Error:", data);
 
