@@ -8,10 +8,7 @@ import {
 
 import { askAI } from "../services/ai.services.js";
 
-
-// Maximum number of previous messages
-// we send to the AI
-const MAX_HISTORY_MESSAGES = 20;
+import { buildContext } from "../utils/context.js";
 
 
 export const chatController = async (req, res, next) => {
@@ -20,12 +17,13 @@ export const chatController = async (req, res, next) => {
 
 
     // ==========================================
-    // 1. Find existing conversation or create
+    // 1. Find or create conversation
     // ==========================================
 
     let conversation;
 
     if (conversationId) {
+
       conversation = await Conversation.findById(
         conversationId
       );
@@ -37,10 +35,13 @@ export const chatController = async (req, res, next) => {
           404
         );
       }
+
     } else {
+
       conversation = await Conversation.create({
         title: message.substring(0, 30),
       });
+
     }
 
 
@@ -56,35 +57,36 @@ export const chatController = async (req, res, next) => {
 
 
     // ==========================================
-    // 3. Get recent conversation history
+    // 3. Get all conversation messages
     // ==========================================
 
-    const previousMessages = await Message.find({
+    const allMessages = await Message.find({
       conversationId: conversation._id,
     })
-      .sort({ createdAt: -1 })
-      .limit(MAX_HISTORY_MESSAGES)
+      .sort({ createdAt: 1 })
       .select("role content -_id");
 
 
     // ==========================================
-    // 4. Reverse messages back to oldest → newest
+    // 4. Build token-based context
     // ==========================================
 
-    previousMessages.reverse();
-
-
-    // ==========================================
-    // 5. Send recent history to AI
-    // ==========================================
-
-    const aiResult = await askAI(
-      previousMessages
+    const context = buildContext(
+      allMessages
     );
 
 
     // ==========================================
-    // 6. Get AI response and token usage
+    // 5. Send selected context to AI
+    // ==========================================
+
+    const aiResult = await askAI(
+      context.messages
+    );
+
+
+    // ==========================================
+    // 6. Get AI response
     // ==========================================
 
     const aiResponse = aiResult.content;
@@ -112,13 +114,19 @@ export const chatController = async (req, res, next) => {
       "AI response generated successfully",
       {
         conversationId: conversation._id,
+
         response: aiResponse,
+
+        contextTokens: context.tokenCount,
+
         usage,
       },
       200
     );
 
   } catch (error) {
+
     next(error);
+
   }
 };

@@ -1,5 +1,6 @@
 ## 🟢 Phase 1 — Basic AI Integration ✅
 ## 🟡 Phase 2 — Prompt Engineering
+
 ``` diff 
 !You'll learn:
 +--> 1. System prompts

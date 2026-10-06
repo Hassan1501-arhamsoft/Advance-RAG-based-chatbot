@@ -24,7 +24,7 @@ export const askAI = async (messages) => {
       },
 
       body: JSON.stringify({
-        model: "liquid/lfm-2.5-2.6b:free",
+        model: "openrouter/free",
 
         messages: [
           {

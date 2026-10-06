@@ -195,14 +195,14 @@ function ChatBox() {
         <div className="border-b border-gray-200 p-4">
 
           <h1 className="text-lg font-semibold text-gray-800">
-            AI Chatbot
+            🤖 AI Chatbot
           </h1>
 
           <button
             onClick={handleNewChat}
             className="mt-4 w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
           >
-            + New Chat
+           💬 New Chat
           </button>
 
         </div>
@@ -274,7 +274,7 @@ function ChatBox() {
         <div className="border-b border-gray-200 bg-white px-6 py-4">
 
           <h2 className="text-xl font-semibold text-gray-800">
-            AI Chat
+            🤖 AI Chat
           </h2>
 
           <p className="text-sm text-gray-500">
