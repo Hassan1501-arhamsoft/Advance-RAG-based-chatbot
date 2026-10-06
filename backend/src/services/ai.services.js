@@ -48,5 +48,8 @@ export const askAI = async (messages) => {
     );
   }
 
-  return data.choices?.[0]?.message?.content;
+  return {
+    content: data.choices?.[0]?.message?.content,
+    usage: data.usage || null,
+  };
 };
