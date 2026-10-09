@@ -6,12 +6,14 @@ import {
   errorResponse,
 } from "../utils/response.js";
 
+//~ ==========================================
+//^ Get all conversations
+//~ ==========================================
 
-// Get all conversations
 export const getConversations = async (req, res, next) => {
   try {
     const conversations = await Conversation.find()
-      .sort({ updatedAt: -1 })
+      .sort({ updatedAt: -1 }) 
       .select("title createdAt updatedAt");
 
     return successResponse(
@@ -25,8 +27,10 @@ export const getConversations = async (req, res, next) => {
   }
 };
 
+//~ ==========================================
+//^ Get one conversation with messages
+//~ ==========================================
 
-// Get one conversation with messages
 export const getConversation = async (req, res, next) => {
   try {
     const { conversationId } = req.params;

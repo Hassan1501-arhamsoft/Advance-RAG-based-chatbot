@@ -7,16 +7,17 @@ import {
 
 const router = express.Router();
 
+//~ ==========================================
+//^ Get all conversations
+//~ ==========================================
 
-// Get all conversations
 router.get("/", getConversations);
 
+//~ ==========================================
+//^ Get single conversation
+//~ ==========================================
 
-// Get single conversation
-router.get(
-  "/:conversationId",
-  getConversation
-);
+router.get("/:conversationId",getConversation);
 
 
 export default router;

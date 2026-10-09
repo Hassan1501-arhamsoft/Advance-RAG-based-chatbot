@@ -135,13 +135,17 @@ function ChatBox() {
     } catch (error) {
       console.error(error);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Something went wrong.",
-        },
-      ]);
+  const errorMessage =
+    error.response?.data?.message ||
+    "Something went wrong.";
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "assistant",
+      content: errorMessage,
+    },
+  ]);
     } finally {
       setLoading(false);
     }

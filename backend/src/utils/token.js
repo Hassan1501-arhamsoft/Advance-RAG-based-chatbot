@@ -3,7 +3,10 @@ import { encodingForModel } from "js-tiktoken";
 const encoder = encodingForModel("gpt-4o");
 
 
-// Count tokens in text
+//~ ===========================================================================
+//^ converts text into tokens and assigns a standard ID (integer) to each token
+//~ =========================================================================== 
+
 export const countTokens = (text) => {
   return encoder.encode(text).length;
 };

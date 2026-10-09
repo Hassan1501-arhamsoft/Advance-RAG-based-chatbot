@@ -4,8 +4,17 @@ const conversationSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      default: "New Chat",
-      trim: true,
+      required: true,
+    },
+
+    summary: {
+      type: String,
+      default: "",
+    },
+
+    summaryMessageCount: {
+      type: Number,
+      default: 0,
     },
   },
   {
