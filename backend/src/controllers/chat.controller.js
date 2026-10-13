@@ -109,37 +109,45 @@ export const chatController = async (req, res, next) => {
     // const context =buildContext(recentMessages);
     // console.log(context)
 
-    const aiResult = await askAI(recentMessages, conversation.summary);
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders(); 
 
 
-    await Message.create({
-      conversationId: conversation._id,
-      role: "assistant",
-      content: aiResult.content,
-    });
+    let fullAiResponse = "";
 
+    try {
+      const stream = askAI(recentMessages, conversation.summary);
 
+      
+      for await (const chunk of stream) {
+        fullAiResponse += chunk;
+      
+        res.write(`data: ${JSON.stringify({ event: "chunk", content: chunk })}\n\n`);
+      }
 
-    return successResponse(
-      res,
-      "AI response generated successfully",
-      {
-        conversationId: conversation._id,
+  
+      if (fullAiResponse.trim()) {
+        await Message.create({
+          conversationId: conversation._id,
+          role: "assistant",
+          content: fullAiResponse,
+        });
+      }
 
-        response: aiResult.content,
+    
+      res.write(`data: ${JSON.stringify({ event: "done" })}\n\n`);
+      res.end();
 
-        usage: aiResult.usage,
-
-        // contextTokens: context.totalContextTokens,
-
-        summary: conversation.summary,
-      },
-      200
-    );
+    } catch (streamError) {
+      console.error("Streaming error:", streamError);
+      res.write(`data: ${JSON.stringify({ event: "error", message: "Failed to generate AI response." })}\n\n`);
+      res.end();
+    }
 
   } catch (error) {
-
+    
     next(error);
-
   }
 };

@@ -1,4 +1,4 @@
-export const askAI = async (messages, summary = "") => {
+export const askAI = async function* (messages, summary = "") {
   const systemPrompt = `
     You are a helpful MERN stack and AI integration tutor.
 
@@ -47,12 +47,7 @@ export const askAI = async (messages, summary = "") => {
     - If you cannot find the requested earlier information in the provided context or recent messages, honestly state that it is no longer in your active memory window.
   `;
 
-  const apiMessages = [
-    {
-      role: "system",
-      content: systemPrompt,
-    }
-  ];
+  const apiMessages = [{ role: "system", content: systemPrompt }];
 
   if (summary) {
     apiMessages.push({
@@ -63,35 +58,56 @@ export const askAI = async (messages, summary = "") => {
 
   apiMessages.push(...messages);
 
-  const response = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      },
-
-      body: JSON.stringify({
-        model: "openrouter/free",
-        messages: apiMessages,
-      }),
-    }
-  );
-
-  const data = await response.json();
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "openrouter/free",
+      messages: apiMessages,
+      stream: true, 
+    }),
+  });
 
   if (!response.ok) {
-    console.error("OpenRouter Error:", data);
-
-    throw new Error(
-      data.error?.message || "OpenRouter request failed"
-    );
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || "OpenRouter request failed");
   }
 
-  return {
-    content: data.choices?.[0]?.message?.content,
-    usage: data.usage || null,
-  };
+  //^ Web stream Api
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    
+    buffer = lines.pop(); 
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine || trimmedLine === "data: [DONE]") continue;
+      
+      if (trimmedLine.startsWith("data: ")) {
+        try {
+          const jsonStr = trimmedLine.slice(6);
+          const parsed = JSON.parse(jsonStr);
+          const contentDelta = parsed.choices?.[0]?.delta?.content || "";
+          
+          if (contentDelta) {
+            yield contentDelta; 
+          }
+        } catch (error) {
+          console.error("Stream parsing error on line:", trimmedLine, error);
+        }
+      }
+    }
+  }
 };

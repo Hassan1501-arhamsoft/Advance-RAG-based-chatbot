@@ -1,77 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 
 import {
-  sendMessage,
+  sendMessageStream,
   getConversation,
   getConversations,
 } from "../services/chat.service";
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
-
   const [loading, setLoading] = useState(false);
-
   const [conversations, setConversations] = useState([]);
-
+  
   const [conversationId, setConversationId] = useState(() => {
     return localStorage.getItem("conversationId");
   });
 
+  // 1. ADD THIS: A ref to track if the AI is actively streaming
+  const isStreaming = useRef(false);
 
   // ==========================================
   // Load all previous conversations
   // ==========================================
-
   useEffect(() => {
     const loadConversations = async () => {
       try {
         const data = await getConversations();
-
         setConversations(data.data);
-        console.log("Conversations loaded:", data.data);
       } catch (error) {
-        console.error(
-          "Failed to load conversations:",
-          error
-        );
+        console.error("Failed to load conversations:", error);
       }
     };
-
     loadConversations();
   }, []);
-
 
   // ==========================================
   // Load selected conversation
   // ==========================================
-
   useEffect(() => {
     const loadConversation = async () => {
-      if (!conversationId) {
+      // 2. PREVENT FETCH: Do not fetch from DB if we are currently streaming text!
+      if (!conversationId || isStreaming.current) {
         return;
       }
 
       try {
         setLoading(true);
-
-        const data = await getConversation(
-          conversationId
-        );
-
+        const data = await getConversation(conversationId);
         setMessages(data.data.messages);
       } catch (error) {
-        console.error(
-          "Failed to load conversation:",
-          error
-        );
-
+        console.error("Failed to load conversation:", error);
         localStorage.removeItem("conversationId");
-
         setConversationId(null);
-
         setMessages([]);
       } finally {
         setLoading(false);
@@ -81,109 +63,97 @@ function ChatBox() {
     loadConversation();
   }, [conversationId]);
 
-
   // ==========================================
   // Send message
   // ==========================================
-
   const handleSendMessage = async (message) => {
-    const userMessage = {
-      role: "user",
-      content: message,
-    };
+    
+    isStreaming.current = true;
 
     setMessages((prev) => [
       ...prev,
-      userMessage,
+      { role: "user", content: message },
     ]);
 
     setLoading(true);
 
     try {
-      const data = await sendMessage({
+      await sendMessageStream({
         conversationId,
         message,
+      
+
+        onChunk: (chunkText) => {
+          setLoading(false); 
+          
+          setMessages((prev) => {
+            const updatedMessages = [...prev];
+            const lastMessage = updatedMessages[updatedMessages.length - 1];
+            
+            if (lastMessage && lastMessage.role === "assistant") {
+              updatedMessages[updatedMessages.length - 1] = {
+                ...lastMessage,
+                content: lastMessage.content + chunkText,
+              };
+            } else {
+              updatedMessages.push({
+                role: "assistant",
+                content: chunkText,
+              });
+            }
+            return updatedMessages;
+          });
+        },
+
+        onError: (errorMessage) => {
+          setLoading(false);
+          setMessages((prev) => {
+            const updatedMessages = [...prev];
+            const lastMessage = updatedMessages[updatedMessages.length - 1];
+            
+            if (lastMessage && lastMessage.role === "assistant") {
+              updatedMessages[updatedMessages.length - 1].content += `\n\n[Error: ${errorMessage}]`;
+            } else {
+              updatedMessages.push({ role: "assistant", content: errorMessage });
+            }
+            return updatedMessages;
+          });
+        },
       });
 
-      const newConversationId =
-        data.data.conversationId;
-
-      setConversationId(newConversationId);
-
-      localStorage.setItem(
-        "conversationId",
-        newConversationId
-      );
-
-      const aiMessage = {
-        role: "assistant",
-        content: data.data.response,
-      };
-
-      setMessages((prev) => [
-        ...prev,
-        aiMessage,
-      ]);
-
-      // Refresh conversation list
-      const conversationsData =
-        await getConversations();
-
-      setConversations(
-        conversationsData.data
-      );
+      // Stream is fully complete here. Refresh the sidebar history.
+      const conversationsData = await getConversations();
+      setConversations(conversationsData.data);
+      
     } catch (error) {
       console.error(error);
-
-  const errorMessage =
-    error.response?.data?.message ||
-    "Something went wrong.";
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "assistant",
-      content: errorMessage,
-    },
-  ]);
-    } finally {
       setLoading(false);
+    } finally {
+      
+      isStreaming.current = false;
     }
   };
-
 
   // ==========================================
   // Open previous conversation
   // ==========================================
-
-  const handleSelectConversation = (
-    selectedConversationId
-  ) => {
-    setConversationId(
-      selectedConversationId
-    );
-
-    localStorage.setItem(
-      "conversationId",
-      selectedConversationId
-    );
+  const handleSelectConversation = (selectedConversationId) => {
+    // 5. UNLOCK forcefully if user clicks a different chat mid-stream
+    isStreaming.current = false; 
+    setConversationId(selectedConversationId);
+    localStorage.setItem("conversationId", selectedConversationId);
   };
-
 
   // ==========================================
   // Create new chat
   // ==========================================
-
   const handleNewChat = () => {
-    localStorage.removeItem(
-      "conversationId"
-    );
-
+    // 6. UNLOCK forcefully if user clicks New Chat mid-stream
+    isStreaming.current = false;
+    localStorage.removeItem("conversationId");
     setConversationId(null);
-
     setMessages([]);
   };
-
 
   return (
     <div className="flex h-screen bg-gray-100">

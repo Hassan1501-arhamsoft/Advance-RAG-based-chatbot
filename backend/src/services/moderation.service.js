@@ -8,7 +8,7 @@ export const moderateInput = async (message) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      
+
       body: JSON.stringify({
         model: "omni-moderation-latest",
         input: message,
@@ -28,6 +28,7 @@ export const moderateInput = async (message) => {
   }
 
   const result = data.results?.[0];
+
 
   return {
     flagged: result?.flagged || false,
