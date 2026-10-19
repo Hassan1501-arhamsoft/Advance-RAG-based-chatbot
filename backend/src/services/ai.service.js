@@ -1,50 +1,30 @@
-export const askAI = async function* (messages, summary = "") {
-  const systemPrompt = `
-    You are a helpful MERN stack and AI integration tutor.
+export const askAI = async function* (messages, summary = "", ragContext = "") {
+const formattedRagContext = Array.isArray(ragContext)
+  ? ragContext
+      .map(
+        (item, index) =>
+          `[Document ${index + 1}]\n` +
+          `Source: ${item.source ?? "Unknown"}\n` +
+          `Content:\n${item.content}`
+      )
+      .join("\n\n")
+  : ragContext;
 
-    Your job is to help the user learn programming
-    and AI integration.
 
-    Rules:
-    - Explain concepts in simple language.
-    - Assume the user is a beginner to intermediate developer.
-    - Give JavaScript examples when useful.
-    - Explain what, why, and how.
-    - Avoid unnecessary complexity.
+const systemPrompt = `
+    You are a strict document-grounded assistant.
+    Your ONLY job is to answer the user's question using the "RETRIEVED DOCUMENT CONTEXT" provided below.
 
-    USER PERSONAL INFORMATION:
-    - Name: Hassan Maqbool 
-    - Also known as: Hassan 
-    - Date of Birth: 21 May 2004
-    - Education: BSCS from Islamia University of Bahawalpur
-    - CGPA: 3.73 / 4.00
-    - Hometown: Bahawalnagar
-    - Current city: Lahore
-    - Professional role: MERN Stack and IoT Developer
-    - Experience: 1 years in IoT, web, and mobile app development
-    - Current learning focus: AI integration with MERN stack
-    - Main technologies: JavaScript, React.js, Node.js, Express.js,
-      MongoDB, MySQL, Sequelize, Python, HTML, CSS, Tailwind CSS
-    - AI learning: LLM APIs, OpenRouter, chatbots, RAG and AI integration
-    - Portfolio: https://hassan07.netlify.app/
+    STRICT GROUNDING RULES:
+    1. Read the "RETRIEVED DOCUMENT CONTEXT" carefully.
+    2. Answer the question using ONLY the facts present in the "RETRIEVED DOCUMENT CONTEXT" or earlier conversation summary.
+    3. DOMAIN RESTRICTION: This assistant is exclusively designed to answer questions about Hassan's personal data, professional background, and projects. If the user's query is NOT related to Hassan, you MUST reject the prompt and reply ONLY with: "I can only provide information related to Hassan's personal data and portfolio."
+    4. If the query is about Hassan but the answer is NOT explicitly stated in the "RETRIEVED DOCUMENT CONTEXT", you MUST reply with: "I am sorry, but I do not have that information in the provided document."
+    5. NEVER use your own outside knowledge, pre-trained memory, or assumptions to answer general questions (like coding, history, or math) unless it is explicitly written in the document context.
+    6. Do not invent or guess any information.
 
-    PERSONAL INFORMATION RULES:
-    - If the user asks about their personal information,
-      answer using the information provided above.
-    - If the requested information is not provided above,
-      say that you don't have that information.
-    - Do not invent personal information.
-    - If the user asks "What is my name?", give their name.
-    - If the user asks "Where am I from?", answer Bahawalnagar.
-    - If the user asks "Where do I currently live?", answer Lahore.
-    - If the user asks about their education, answer with their BSCS
-      from Islamia University of Bahawalpur and CGPA 3.73/4.
-      
-    CONTEXT & MEMORY RULES:
-    - You will be provided with "Context from earlier in this conversation" (a summary) and the most recent messages.
-    - Always check this earlier context before answering to see if the user already provided the necessary facts, code, or details.
-    - If the user says something is "important" or shares a specific technical requirement, explicitly acknowledge it in your response so it remains active in the conversation context.
-    - If you cannot find the requested earlier information in the provided context or recent messages, honestly state that it is no longer in your active memory window.
+    RETRIEVED DOCUMENT CONTEXT:
+    ${formattedRagContext || "No relevant document context found for this query."}
   `;
 
   const apiMessages = [{ role: "system", content: systemPrompt }];
@@ -52,7 +32,7 @@ export const askAI = async function* (messages, summary = "") {
   if (summary) {
     apiMessages.push({
       role: "system",
-      content: `Context from earlier in this conversation:\n${summary}`
+      content: `Context from earlier in this conversation:\n${summary}`,
     });
   }
 
@@ -65,9 +45,9 @@ export const askAI = async function* (messages, summary = "") {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "openrouter/free",
+      model: "minimax/minimax-m3.1-flash:free",
       messages: apiMessages,
-      stream: true, 
+      stream: true,
     }),
   });
 
@@ -76,7 +56,6 @@ export const askAI = async function* (messages, summary = "") {
     throw new Error(errorData.error?.message || "OpenRouter request failed");
   }
 
-  //^ Web stream Api
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
   let buffer = "";
@@ -85,24 +64,22 @@ export const askAI = async function* (messages, summary = "") {
     const { done, value } = await reader.read();
     if (done) break;
 
-    
     buffer += decoder.decode(value, { stream: true });
     const lines = buffer.split("\n");
-    
-    buffer = lines.pop(); 
+    buffer = lines.pop();
 
     for (const line of lines) {
       const trimmedLine = line.trim();
       if (!trimmedLine || trimmedLine === "data: [DONE]") continue;
-      
+
       if (trimmedLine.startsWith("data: ")) {
         try {
           const jsonStr = trimmedLine.slice(6);
           const parsed = JSON.parse(jsonStr);
           const contentDelta = parsed.choices?.[0]?.delta?.content || "";
-          
+
           if (contentDelta) {
-            yield contentDelta; 
+            yield contentDelta;
           }
         } catch (error) {
           console.error("Stream parsing error on line:", trimmedLine, error);

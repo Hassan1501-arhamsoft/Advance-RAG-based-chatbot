@@ -1,0 +1,96 @@
+Personal Identity and Contact Information of Hassan Maqbool:
+Full Name: Hassan Maqbool (also known as Hassan).
+Date of Birth: 21 May 2004 (May 21, 2004).
+CNIC Number (National Identity Card): 3110120728109 (formatted as 31101-2072810-9).
+Gender : Male
+Phone Number : 03136064985
+Hometown and Place of Origin: Bahawalnagar, Punjab, Pakistan.
+Current City of Residence: Lahore, Punjab, Pakistan.
+Personal Portfolio Website: https://hassan07.netlify.app/
+Education and Academic Background of Hassan Maqbool:
+Degree: Bachelor of Science in Computer Science (BSCS).
+University: The Islamia University of Bahawalpur (IUB).
+CGPA: 3.73 out of 4.00 (3.73 / 4.00).
+Certifications: Completed the "AI Fundamentals: Foundations for Understanding AI" certification course from Cisco Networking Academy.
+
+Professional Role and Experience of Hassan Maqbool:
+Current Role: MERN Stack Developer, Full-Stack Web Developer, AI Integration Engineer, and IoT Developer.
+
+Experience: Over 1 year of hands-on experience building full-stack web applications, mobile apps, AI-powered chatbots, and hardware-integrated IoT systems.
+
+Internship Experience: Participated in the Chief Minister's IT (CMIT) Internship Program in Punjab, focusing on full-stack software engineering and professional project delivery.
+
+Frontend and State Management Skills of Hassan Maqbool:
+Frontend Technologies: JavaScript (ES6+), React.js, HTML5, CSS3, and Tailwind CSS.
+State Management: React Context API (custom AuthContext, SocketContext, CallContext) and Redux Toolkit.
+UI Capabilities: Responsive modern web interfaces, real-time Server-Sent Events (SSE) typewriter streaming UIs, infinite scrolling, and custom React hooks.
+
+Backend, Database, and Testing Skills of Hassan Maqbool:
+Backend Technologies: Node.js, Express.js, Python, RESTful API architecture, and JWT (JSON Web Token) authentication.
+Databases and ORMs: MongoDB, Mongoose, MongoDB Atlas Vector Search, MySQL, Sequelize ORM, and PostgreSQL via Supabase (Backend-as-a-Service).
+
+API Testing and Documentation: Automated integration testing using Jest and Supertest, and interactive API documentation using Swagger (OpenAPI specifications).
+
+AI Integration and LLM Engineering Skills of Hassan Maqbool:
+Current Learning and Development Focus: AI integration with the MERN stack, Large Language Model (LLM) APIs, OpenRouter API, and OpenAI SDK configuration.
+
+Advanced AI Engineering: Building Retrieval-Augmented Generation (RAG) pipelines using MongoDB Atlas Vector Search and local transformer embeddings (@xenova/transformers, all-MiniLM-L6-v2). Experienced in implementing Server-Sent Events (SSE) response streaming, token counting, automated conversation summarization for long-term memory, custom input guardrails, and safety moderation.
+
+Real-Time Communication and IoT Hardware Skills of Hassan Maqbool:
+Real-Time Technologies: Bidirectional event communication using WebSockets (Socket.IO), peer-to-peer (P2P) audio calling using WebRTC, STUN/TURN server setup, and research on real-time calling platforms including Twilio, Agora, and LiveKit.
+IoT and Hardware Integration: Designing Internet of Things (IoT) systems using Arduino Uno microcontrollers, RFID scanners, and I2C LCD displays connected to real-time MERN stack web dashboards.
+
+Key Projects Built by Hassan Maqbool:
+1. AI Chatbot with Streaming and RAG: A full-stack MERN chatbot utilizing OpenRouter APIs, real-time SSE response streaming, input guardrails, automated memory summarization, and a custom RAG pipeline powered by MongoDB Atlas Vector Search.
+2. Real-Time Chat and Audio Calling App: A full-stack MERN application built with Socket.IO and WebRTC featuring JWT authentication, 1-on-1 messaging, group chats, infinite message scrolling, and peer-to-peer audio calls.
+3. RFID-Based IoT Attendance System: An IoT hardware and web integration project combining Arduino Uno, RFID scanners, and I2C displays with a MERN stack dashboard for automated attendance tracking.
+4. Cloud Task Management Application: A responsive task manager built with React.js, Tailwind CSS, and Supabase PostgreSQL Backend-as-a-Service.
+5. E-Commerce and Web Utilities: Designed the technical architecture and manual Cash-on-Delivery (COD) workflow for a perfume e-commerce store, and deployed a live interactive calculator web application at https://calculator-sable-xi.vercel.app/.
+
+DevOps, Cloud Deployment, and Tools Used by Hassan Maqbool:
+Version Control and CI/CD: Git and GitHub with automated continuous deployment pipelines.
+Cloud Hosting Platforms: Vercel, Netlify, Railway, and Supabase.
+Development Environment: VS Code, Postman, and Linux.
+Work Philosophy and Coding Standards of Hassan Maqbool:
+Engineering Approach: Hassan Maqbool specializes in writing clean, modular, and maintainable code following the DRY (Don't Repeat Yourself) and separation-of-concerns principles.
+Backend Architecture: Prefers structuring Node.js and Express applications into clear layers—Models, Services, Controllers, Routes, and Utilities—to ensure scalability and easy debugging.
+Frontend Standards: Focuses on immutable state updates in React, custom hooks for reusable logic, and responsive, accessible user interfaces using Tailwind CSS.
+
+Freelance Services and Availability of Hassan Maqbool:
+Work Availability: Hassan Maqbool is available for full-time software engineering roles, remote opportunities, and freelance web or AI development projects.
+Services Offered: Full-stack MERN web application development, custom AI chatbot integration with streaming and RAG pipelines, REST API design and testing, database modeling (MongoDB and MySQL), and IoT hardware-to-web dashboard integration.
+Preferred Work Location: Open to on-site and hybrid roles in Lahore, Pakistan, as well as remote positions worldwide.
+
+Detailed Project Architecture - AI Chatbot with RAG and Streaming:
+Project Overview: Built by Hassan Maqbool, this project is a production-grade AI assistant using React.js on the frontend and Node.js/Express on the backend.
+Key Technical Features: Uses OpenRouter APIs with async generator functions and Server-Sent Events (SSE) for real-time typewriter response streaming. Includes automated conversation summarization when token limits exceed threshold, custom input guardrails, safety moderation, and a zero-cost RAG pipeline using @xenova/transformers (all-MiniLM-L6-v2) and MongoDB Atlas Vector Search.
+
+Detailed Project Architecture - Real-Time Chat and WebRTC Audio Calling App:
+Project Overview: Developed by Hassan Maqbool to handle instant communication and peer-to-peer media streaming.
+Key Technical Features: Uses Socket.IO for real-time 1-on-1 and group messaging, online user presence tracking, and WebRTC signaling. Implements peer-to-peer audio calling with STUN/TURN server configurations, JWT-based authentication, React Context API (AuthContext, SocketContext, CallContext), and infinite message scrolling.
+
+Detailed Project Architecture - RFID-Based IoT Attendance System:
+Project Overview: An end-to-end hardware and software integration project created by Hassan Maqbool.
+Key Technical Features: Uses an Arduino Uno microcontroller interfaced with an RFID reader module and an I2C LCD display to scan student or employee ID cards. The hardware communicates with a Node.js, Express, and MongoDB backend to log attendance timestamps in real time and display live analytics on a React web dashboard.
+
+Detailed Project Architecture - Perfume E-Commerce & Cloud Task Manager:
+E-Commerce Architecture: Hassan Maqbool designed a specialized perfume e-commerce web application featuring product catalog management, cart state management, and a custom manual Cash-on-Delivery (COD) order verification workflow tailored for local Pakistani customers.
+Cloud Task Manager: Built a fast, serverless task management application using React.js, Tailwind CSS, and Supabase (PostgreSQL Backend-as-a-Service) with custom hooks and service layers.
+
+Language Proficiency and Communication Skills of Hassan Maqbool:
+Languages Spoken: Fluent in Urdu, Punjabi, and professional English.
+Communication Focus: Actively practices professional English speaking fluency, technical documentation writing, and clear client communication for software engineering teams.
+
+Hardware, System Analysis, and Design Skills of Hassan Maqbool:
+System Diagnostics: Experienced in analyzing laptop hardware architectures, multi-core processors (such as Intel Core and AMD Ryzen series), and Windows power/battery health reports.
+Digital & UI Design: Creates custom LinkedIn banners, professional profile portraits, and promotional posters using digital design and photo editing tools. Also interested in modern interior and ceiling color design combinations (such as charcoal, smoke grey, beaver, fawn, and autumn stone).
+
+Career Goals and Future Learning Roadmap of Hassan Maqbool:
+Short-Term Goal: Mastering advanced AI engineering in JavaScript/TypeScript, including agentic workflows, tool calling, vector databases, and production-ready RAG systems.
+Long-Term Goal: Becoming a Senior Full-Stack & AI Systems Architect capable of leading end-to-end product engineering from database and hardware level up to cloud deployment and AI automation.
+
+Frequently Asked Questions (FAQ) About Hassan Maqbool:
+Q: Can Hassan build a complete web app from scratch?
+A: Yes, Hassan handles everything from UI design in React and Tailwind CSS to backend APIs in Node.js/Express, database schemas in MongoDB/MySQL, and deployment on Vercel or Railway.
+Q: How does Hassan handle AI costs in his projects?
+A: He optimizes token usage through context summarization, uses free or cost-effective models via OpenRouter, and runs local embedding models like Xenova/all-MiniLM-L6-v2 to keep RAG pipelines 100% free.

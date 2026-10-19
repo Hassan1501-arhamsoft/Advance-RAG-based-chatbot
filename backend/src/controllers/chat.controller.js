@@ -6,6 +6,7 @@ import { askAI } from "../services/ai.service.js";
 import { generateSummary } from "../services/summary.service.js";
 import { countMessageTokens } from "../utils/token.js";
 import { moderateInput } from "../services/moderation.service.js";
+import { retrieveRelevantContext } from "../services/rag.service.js";
 // import { buildContext } from "../utils/context.js";
 
 
@@ -16,7 +17,7 @@ export const chatController = async (req, res, next) => {
 
   try {
 
-    const { conversationId, message } = req.body;
+    const { conversationId, message ,category } = req.body;
     const validation = validateInput(message);
 
     if (!validation.allowed) {
@@ -105,9 +106,11 @@ export const chatController = async (req, res, next) => {
     // ==========================================
     // 8. Build token-based context
     // ==========================================
-
     // const context =buildContext(recentMessages);
     // console.log(context)
+    
+    const ragContext = await retrieveRelevantContext(message , category);
+    
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -118,7 +121,7 @@ export const chatController = async (req, res, next) => {
     let fullAiResponse = "";
 
     try {
-      const stream = askAI(recentMessages, conversation.summary);
+      const stream = askAI(recentMessages, conversation.summary ,ragContext);
 
       
       for await (const chunk of stream) {

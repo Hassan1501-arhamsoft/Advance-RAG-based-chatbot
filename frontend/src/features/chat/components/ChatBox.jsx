@@ -81,6 +81,7 @@ function ChatBox() {
       await sendMessageStream({
         conversationId,
         message,
+        
       
 
         onChunk: (chunkText) => {
@@ -156,182 +157,145 @@ function ChatBox() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-white text-slate-800 font-sans antialiased">
 
-      {/* =====================================
-          SIDEBAR
-      ====================================== */}
+  {/* =====================================
+      SIDEBAR
+  ====================================== */}
+  <aside className="flex w-72 flex-col border-r border-slate-200 bg-slate-50/50">
+    
+    {/* Sidebar Header */}
+    <div className="p-5">
+      <div className="flex items-center gap-2">
+        <span className="text-xl">🤖</span>
+        <h1 className="text-lg font-bold tracking-tight text-slate-900">
+          AI Assistant
+        </h1>
+      </div>
 
-      <aside className="flex w-72 flex-col border-r border-gray-200 bg-white">
+      <button
+        onClick={handleNewChat}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 focus:ring-offset-slate-50"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+        </svg>
+        New Chat
+      </button>
+    </div>
 
-        {/* Sidebar Header */}
+    {/* Previous Conversations */}
+    <div className="flex-1 overflow-y-auto px-3 py-2 scrollbar-thin scrollbar-thumb-slate-200">
+      <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        Recent Conversations
+      </p>
 
-        <div className="border-b border-gray-200 p-4">
-
-          <h1 className="text-lg font-semibold text-gray-800">
-            🤖 AI Chatbot
-          </h1>
-
-          <button
-            onClick={handleNewChat}
-            className="mt-4 w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
-          >
-           💬 New Chat
-          </button>
-
+      {conversations.length === 0 ? (
+        <p className="px-2 text-sm text-slate-400 italic">
+          No conversations yet
+        </p>
+      ) : (
+        <div className="space-y-1">
+          {conversations.map((conversation) => (
+            <button
+              key={conversation._id}
+              onClick={() => handleSelectConversation(conversation._id)}
+              className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all duration-200 ${
+                conversationId === conversation._id
+                  ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 font-medium"
+                  : "text-slate-600 hover:bg-slate-200/50 hover:text-slate-900"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 shrink-0 ${conversationId === conversation._id ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+              <p className="truncate">
+                {conversation.title}
+              </p>
+            </button>
+          ))}
         </div>
+      )}
+    </div>
+  </aside>
 
+  {/* =====================================
+      CHAT AREA
+  ====================================== */}
+  <main className="flex min-w-0 flex-1 flex-col bg-white relative">
+    
+    {/* Header */}
+    <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/80 px-6 py-4 backdrop-blur-md">
+      <div>
+        <h2 className="text-lg font-semibold text-slate-900">
+          Current Session
+        </h2>
+        <p className="text-xs font-medium text-slate-500">
+          MERN + OpenRouter
+        </p>
+      </div>
+    </div>
 
-        {/* Previous Conversations */}
-
-        <div className="flex-1 overflow-y-auto p-3">
-
-          <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Previous Conversations
-          </p>
-
-
-          {conversations.length === 0 ? (
-
-            <p className="px-2 text-sm text-gray-400">
-              No conversations yet
+    {/* Messages */}
+    <div className="flex-1 overflow-y-auto scroll-smooth">
+      <div className="mx-auto w-full max-w-4xl p-6 space-y-6">
+        
+        {messages.length === 0 ? (
+          <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 shadow-inner ring-1 ring-slate-100">
+              <span className="text-3xl">👋</span>
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+              How can I help you today?
+            </h2>
+            <p className="mt-2 text-base text-slate-500 max-w-sm">
+              Ask me anything, brainstorm ideas, or write code to get started.
             </p>
+          </div>
+        ) : (
+          messages.map((message, index) => (
+            <ChatMessage
+              key={index}
+              role={message.role}
+              message={message.content}
+            />
+          ))
+        )}
 
-          ) : (
+        {/* Loading */}
+       {loading && (
+  <div className="flex justify-start pt-2">
+    <div className="flex w-fit items-center gap-2.5 rounded-2xl rounded-tl-sm border border-slate-100 bg-slate-50 px-5 py-3.5 shadow-sm">
+      <span className="animate-pulse text-sm font-medium text-slate-500">
+        Thinking
+      </span>
+      <div className="flex items-center gap-1 pt-1">
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400"></span>
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:0.15s]"></span>
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:0.3s]"></span>
+      </div>
+    </div>
+  </div>
+)}
+      </div>
+    </div>
 
-            <div className="space-y-1">
-
-              {conversations.map(
-                (conversation) => (
-
-                  <button
-                    key={conversation._id}
-                    onClick={() =>
-                      handleSelectConversation(
-                        conversation._id
-                      )
-                    }
-                    className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
-                      conversationId ===
-                      conversation._id
-                        ? "bg-gray-200 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-
-                    <p className="truncate font-medium">
-                      {conversation.title}
-                    </p>
-
-                  </button>
-
-                )
-              )}
-
-            </div>
-
-          )}
-
-        </div>
-
-      </aside>
-
-
-      {/* =====================================
-          CHAT AREA
-      ====================================== */}
-
-      <main className="flex min-w-0 flex-1 flex-col">
-
-        {/* Header */}
-
-        <div className="border-b border-gray-200 bg-white px-6 py-4">
-
-          <h2 className="text-xl font-semibold text-gray-800">
-            🤖 AI Chat
-          </h2>
-
-          <p className="text-sm text-gray-500">
-            MERN + OpenRouter
-          </p>
-
-        </div>
-
-
-        {/* Messages */}
-
-        <div className="flex-1 space-y-4 overflow-y-auto bg-gray-50 p-6">
-
-          {messages.length === 0 ? (
-
-            <div className="flex h-full items-center justify-center">
-
-              <div className="text-center">
-
-                <h2 className="text-2xl font-semibold text-gray-700">
-                  How can I help you?
-                </h2>
-
-                <p className="mt-2 text-sm text-gray-500">
-                  Ask me anything to get started.
-                </p>
-
-              </div>
-
-            </div>
-
-          ) : (
-
-            messages.map((message, index) => (
-
-              <ChatMessage
-                key={index}
-                role={message.role}
-                message={message.content}
-              />
-
-            ))
-
-          )}
-
-
-          {/* Loading */}
-
-          {loading && (
-
-            <div className="flex justify-start">
-
-              <div className="rounded-2xl rounded-bl-md bg-gray-100 px-4 py-3">
-
-                <div className="flex gap-1">
-
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></span>
-
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:0.15s]"></span>
-
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:0.3s]"></span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          )}
-
-        </div>
-
-
-        {/* Input */}
-
+    {/* Input Area */}
+    <div className="bg-gradient-to-t from-white via-white to-transparent pt-6">
+      <div className="mx-auto w-full max-w-4xl px-6 pb-6">
         <ChatInput
           onSend={handleSendMessage}
           loading={loading}
         />
-
-      </main>
-
+        <p className="mt-3 text-center text-xs font-medium text-slate-400">
+          AI can make mistakes. Consider verifying important information.
+        </p>
+      </div>
     </div>
+
+  </main>
+
+</div>
   );
 }
 

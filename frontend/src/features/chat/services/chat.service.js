@@ -21,7 +21,7 @@ export const sendMessageStream = async ({ conversationId, message, onChunk, onEr
         "Content-Type": "application/json",
         
       },
-      body: JSON.stringify({ conversationId, message }),
+      body: JSON.stringify({ conversationId, message , category: "portfolio_data" }),
     });
 
     if (!response.ok) {
