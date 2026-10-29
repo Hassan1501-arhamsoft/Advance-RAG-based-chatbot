@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "query": "What is Hassan Maqbool's full name and date of birth?",
+    "expected_answer": "Hassan Maqbool (or Hassan). Born May 21, 2004."
+  },
+  {
+    "id": 2,
+    "query": "What is Hassan's CNIC number?",
+    "expected_answer": "31101-2072810-9"
+  },
+  {
+    "id": 3,
+    "query": "Where is Hassan originally from, and where does he live now?",
+    "expected_answer": "Originally from Bahawalnagar; currently resides in Lahore, Punjab."
+  },
+  {
+    "id": 4,
+    "query": "What is the URL of Hassan's personal portfolio?",
+    "expected_answer": "https://hassan07.netlify.app/"
+  },
+  {
+    "id": 5,
+    "query": "What degree does Hassan hold, and from which university?",
+    "expected_answer": "Bachelor of Science in Computer Science (BSCS) from The Islamia University of Bahawalpur."
+  },
+  {
+    "id": 6,
+    "query": "What was Hassan's CGPA during his BSCS?",
+    "expected_answer": "3.73 out of 4.00."
+  },
+  {
+    "id": 7,
+    "query": "Which Cisco certification did Hassan complete?",
+    "expected_answer": "AI Fundamentals: Foundations for Understanding AI."
+  },
+  {
+    "id": 8,
+    "query": "What are Hassan's primary professional roles?",
+    "expected_answer": "MERN Stack Developer, Full-Stack Web Developer, AI Integration Engineer, and IoT Developer."
+  },
+  {
+    "id": 9,
+    "query": "How many years of experience does Hassan have?",
+    "expected_answer": "Over 1 year of hands-on experience."
+  },
+  {
+    "id": 10,
+    "query": "Where did Hassan complete his software engineering internship?",
+    "expected_answer": "Chief Minister's IT (CMIT) Internship Program in Punjab."
+  }
+]

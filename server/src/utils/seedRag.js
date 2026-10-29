@@ -6,8 +6,16 @@ import mongoose from "mongoose";
 import Knowledge from "../models/knowledge.model.js";
 import { generateEmbedding } from "../services/rag.service.js";
 import { cleanText } from "./cleanText.js";
+import dns from "node:dns";
+import net from "node:net";
 import semantic from "@johnhenry/semantic-chunker";
-
+//----> The first line tells Node.js to prefer IPv4 addresses when returning DNS results.
+dns.setDefaultResultOrder("ipv4first");  
+// -----> The second line checks whether setDefaultAutoSelectFamily exists before calling it. If available, it disables automatic address-family selection for network connections.
+if (net.setDefaultAutoSelectFamily) {
+  net.setDefaultAutoSelectFamily(false);
+}
+// env.remoteHost = "https://hf-mirror.com/";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TXT_FILE = path.resolve(__dirname, "../data/personal_data.txt");

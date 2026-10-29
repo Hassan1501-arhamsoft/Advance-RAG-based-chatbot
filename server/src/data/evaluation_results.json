@@ -1,0 +1,126 @@
+{
+  "average_recall": "100%",
+  "average_faithfulness": "100%",
+  "details": [
+    {
+      "id": 1,
+      "query": "What is Hassan Maqbool's full name and date of birth?",
+      "latency_ms": 3918,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context contains all the necessary information to answer the query about Hassan Maqbool's full name and date of birth. The generated answer accurately extracts this information directly from the context without any hallucination."
+      },
+      "generated_answer": "Based on the provided context, Hassan Maqbool's full name is Hassan Maqbool and his date of birth is 21 May 2004 (May 21, 2004)."
+    },
+    {
+      "id": 2,
+      "query": "What is Hassan's CNIC number?",
+      "latency_ms": 2011,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly contains Hassan's CNIC number, and the generated answer accurately extracts this information directly from the context without any hallucinations."
+      },
+      "generated_answer": "Based on the provided context, Hassan's CNIC number is 3110120728109 (formatted as 31101-2072810-9)."
+    },
+    {
+      "id": 3,
+      "query": "Where is Hassan originally from, and where does he live now?",
+      "latency_ms": 2462,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly contains both his hometown (Bahawalnagar) and his current city of residence (Lahore). The generated answer accurately extracts this information directly from the context without adding any outside knowledge."
+      },
+      "generated_answer": "Based on the provided context:\n\n* **Hometown and Place of Origin:** Bahawalnagar, Punjab, Pakistan.\n* **Current City of Residence:** Lahore, Punjab, Pakistan."
+    },
+    {
+      "id": 4,
+      "query": "What is the URL of Hassan's personal portfolio?",
+      "latency_ms": 1904,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly contains the URL of Hassan's personal portfolio, and the generated answer correctly extracts this exact URL without adding any external or hallucinated information."
+      },
+      "generated_answer": "https://hassan07.netlify.app/"
+    },
+    {
+      "id": 5,
+      "query": "What degree does Hassan hold, and from which university?",
+      "latency_ms": 2008,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly states both the degree and the university. The generated answer accurately extracts this information without any hallucination."
+      },
+      "generated_answer": "Based on the provided context, Hassan holds a Bachelor of Science in Computer Science (BSCS) degree from The Islamia University of Bahawalpur (IUB)."
+    },
+    {
+      "id": 6,
+      "query": "What was Hassan's CGPA during his BSCS?",
+      "latency_ms": 2275,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly states Hassan's CGPA as 3.73 out of 4.00, which directly answers the query. The generated answer accurately reflects this information without any hallucination."
+      },
+      "generated_answer": "Based on the provided context, Hassan's CGPA during his BSCS was 3.73 out of 4.00 (3.73 / 4.00)."
+    },
+    {
+      "id": 7,
+      "query": "Which Cisco certification did Hassan complete?",
+      "latency_ms": 2091,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly contains the information needed to answer the query about Hassan's Cisco certification, and the generated answer accurately reflects this information without hallucination."
+      },
+      "generated_answer": "Based on the context provided, Hassan completed the \"AI Fundamentals: Foundations for Understanding AI\" certification course from Cisco Networking Academy."
+    },
+    {
+      "id": 8,
+      "query": "What are Hassan's primary professional roles?",
+      "latency_ms": 2106,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly states Hassan's professional roles, allowing a complete and accurate answer. The generated answer extracts these roles directly from the context without adding any outside information."
+      },
+      "generated_answer": "Based on the provided context, Hassan Maqbool's primary professional roles are:\n\n* MERN Stack Developer\n* Full-Stack Web Developer\n* AI Integration Engineer\n* IoT Developer"
+    },
+    {
+      "id": 9,
+      "query": "How many years of experience does Hassan have?",
+      "latency_ms": 2173,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly states that Hassan has 'Over 1 year of hands-on experience', which directly answers the query. The generated answer accurately reflects this information without introducing any hallucinations."
+      },
+      "generated_answer": "Based on the provided context, Hassan has over 1 year of hands-on experience."
+    },
+    {
+      "id": 10,
+      "query": "Where did Hassan complete his software engineering internship?",
+      "latency_ms": 2122,
+      "chunks_retrieved": 3,
+      "scores": {
+        "context_recall": 1,
+        "faithfulness": 1,
+        "reasoning": "The provided context explicitly states that Hassan participated in the Chief Minister's IT (CMIT) Internship Program in Punjab, which directly answers the query. The generated answer accurately reflects this information without hallucinating."
+      },
+      "generated_answer": "Based on the provided context, Hassan completed his software engineering internship in the Chief Minister's IT (CMIT) Internship Program in Punjab."
+    }
+  ]
+}
