@@ -13,7 +13,7 @@ const TEXT_INDEX_NAME = "text_index";
 const NUM_CANDIDATES = 20;
 const FINAL_RESULT_LIMIT = 3;
 
-const ALLOWED_CATEGORIES = new Set(["portfolio_data"]);
+const ALLOWED_CATEGORIES = new Set(["portfolio_data", "stranger_things"]);
 
 let embedderPromise = null;
 let rerankerTokenizerPromise = null;
@@ -31,11 +31,26 @@ const getEmbedder = async () => {
 
 const getReranker = async () => {
   if (!rerankerTokenizerPromise || !rerankerModelPromise) {
-    rerankerTokenizerPromise = AutoTokenizer.from_pretrained(RERANKER_MODEL);
-    rerankerModelPromise = AutoModelForSequenceClassification.from_pretrained(RERANKER_MODEL, {
-      dtype: "q8",
-    });
+    rerankerTokenizerPromise = AutoTokenizer
+      .from_pretrained(RERANKER_MODEL);
+
+    rerankerModelPromise = AutoModelForSequenceClassification
+      .from_pretrained(RERANKER_MODEL, { dtype: "q8" });
+
+    try {
+      const [tokenizer, model] = await Promise.all([
+        rerankerTokenizerPromise,
+        rerankerModelPromise,
+      ]);
+
+      return { tokenizer, model };
+    } catch (error) {
+      rerankerTokenizerPromise = null;
+      rerankerModelPromise = null;
+      throw error;
+    }
   }
+
   return {
     tokenizer: await rerankerTokenizerPromise,
     model: await rerankerModelPromise,
@@ -66,7 +81,7 @@ export const generateEmbedding = async (text) => {
 };
 
 /**
- * Advanced Retrieval Pipeline: Hybrid Search + RRF + Cross-Encoder Re-ranking
+  Advanced Retrieval Pipeline: Hybrid Search + RRF + Cross-Encoder Re-ranking
  */
 export const retrieveRelevantContext = async (
   queryText,
@@ -91,12 +106,12 @@ export const retrieveRelevantContext = async (
           path: "embedding",
           queryVector,
           numCandidates: NUM_CANDIDATES,
-          limit: NUM_CANDIDATES,
           filter: {
             "metadata.category": {
               $eq: categoryFilter,
             },
           },
+          limit: NUM_CANDIDATES,
         },
       },
       {
@@ -117,10 +132,10 @@ export const retrieveRelevantContext = async (
           },
         },
       },
-      { $limit: NUM_CANDIDATES },
       {
         $match: { "metadata.category": categoryFilter },
       },
+      { $limit: NUM_CANDIDATES },
       {
         $project: {
           _id: 1,
@@ -156,7 +171,6 @@ export const retrieveRelevantContext = async (
     const outputs = await model(inputs);
     const logits = outputs.logits.data;
     const numLabels = outputs.logits.dims[1] ?? 1;
-
     topCandidatesForRerank.forEach((doc, idx) => {
       const score = numLabels === 1 ? logits[idx] : logits[idx * numLabels + 1];
       doc.relevanceScore = Number(score);

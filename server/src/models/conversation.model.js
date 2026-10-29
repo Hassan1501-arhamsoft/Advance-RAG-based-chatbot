@@ -6,25 +6,22 @@ const conversationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+    category: {
+      type: String,
+      required: true,
+      enum: ["portfolio_data", "stranger_things"],
+      default: "portfolio_data",
+    },
     summary: {
       type: String,
       default: "",
     },
-
     summaryMessageCount: {
       type: Number,
       default: 0,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Conversation = mongoose.model(
-  "Conversation",
-  conversationSchema
-);
-
-export default Conversation;
+export default mongoose.model("Conversation", conversationSchema);

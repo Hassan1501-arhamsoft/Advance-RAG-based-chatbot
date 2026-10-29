@@ -61,7 +61,10 @@ export const chatController = async (req, res, next) => {
     }
      else {
 
-      conversation = await Conversation.create({ title: message.substring(0, 30), });
+      conversation = await Conversation.create({
+      title: message.substring(0, 30),
+      category: category || "portfolio_data",
+  });
     }
 
     await Message.create({
@@ -103,11 +106,9 @@ export const chatController = async (req, res, next) => {
 
     const recentMessages = allMessages.slice(conversation.summaryMessageCount);
 
-    // ==========================================
+
     // 8. Build token-based context
-    // ==========================================
     // const context =buildContext(recentMessages);
-    // console.log(context)
     
     const ragContext = await retrieveRelevantContext(message , category);
     
@@ -117,11 +118,11 @@ export const chatController = async (req, res, next) => {
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders(); 
 
-
+    res.write(`data: ${JSON.stringify({ event: "init", conversationId: conversation._id })}\n\n`);
     let fullAiResponse = "";
 
     try {
-      const stream = askAI(recentMessages, conversation.summary ,ragContext);
+      const stream = askAI(recentMessages, conversation.summary ,ragContext , category);
 
       
       for await (const chunk of stream) {

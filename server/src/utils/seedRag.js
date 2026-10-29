@@ -32,6 +32,8 @@ async function seedKnowledge() {
     const chunker = semantic({
       embed: generateEmbedding,
       zScoreThreshold: 1.0, // Controls sensitivity (higher = larger chunks, lower = smaller chunks)
+      maxChunkSize: 1000,
+      overlap: 1,
     });
 
     const documents = [];
@@ -62,7 +64,7 @@ async function seedKnowledge() {
       doc.metadata.totalChunks = documents.length;
     });
 
-    await Knowledge.deleteMany({});
+    await Knowledge.deleteMany({ "metadata.category": "portfolio_data" });
     await Knowledge.insertMany(documents);
 
     console.log(`Successfully seeded ${documents.length} semantic chunks into MongoDB.`);

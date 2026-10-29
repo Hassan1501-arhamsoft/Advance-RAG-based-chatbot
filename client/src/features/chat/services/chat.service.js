@@ -1,6 +1,5 @@
 import api from "../../../api/axios.js";
 
-// Keep your existing getConversation and getConversations functions
 export const getConversation = async (conversationId) => {
   const response = await api.get(`/conversations/${conversationId}`);
   return response.data;
@@ -11,21 +10,18 @@ export const getConversations = async () => {
   return response.data;
 };
 
-
-export const sendMessageStream = async ({ conversationId, message, onChunk, onError }) => {
+export const sendMessageStream = async ({ conversationId, message, category,onInit, onChunk, onError }) => {
   try {
-    
     const response = await fetch("http://localhost:5000/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        
       },
-      body: JSON.stringify({ conversationId, message , category: "portfolio_data" }),
+      body: JSON.stringify({ conversationId, message, category }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to connect to the chat stream.");
+      throw new Error("I cannot fulfill this request due to safety and content moderation guidelines.");
     }
 
     const reader = response.body.getReader();
@@ -49,7 +45,9 @@ export const sendMessageStream = async ({ conversationId, message, onChunk, onEr
             const dataStr = trimmedLine.slice(6);
             const parsed = JSON.parse(dataStr);
             
-            if (parsed.event === "chunk" && onChunk) {
+           if (parsed.event === "init" && onInit) {
+              onInit(parsed.conversationId);
+            } else if (parsed.event === "chunk" && onChunk) {
               onChunk(parsed.content);
             } else if (parsed.event === "error" && onError) {
               onError(parsed.message);

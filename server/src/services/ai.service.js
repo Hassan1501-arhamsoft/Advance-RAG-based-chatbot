@@ -1,4 +1,4 @@
-export const askAI = async function* (messages, summary = "", ragContext = "") {
+export const askAI = async function* (messages, summary = "", ragContext = "" , category = "") {
 const formattedRagContext = Array.isArray(ragContext)
   ? ragContext
       .map(
@@ -11,17 +11,33 @@ const formattedRagContext = Array.isArray(ragContext)
   : ragContext;
 
 
-const systemPrompt = `
-    You are a strict document-grounded assistant.
-    Your ONLY job is to answer the user's question using the "RETRIEVED DOCUMENT CONTEXT" provided below.
+const isPortfolio = category === "portfolio_data";
+  const domainName = isPortfolio ? "Hassan's personal data, professional background, skills, and projects" : "the Stranger Things universe, characters, plot, and lore";
+  const subjectName = isPortfolio ? "Hassan" : "Stranger Things";
+  const rejectionMessage = isPortfolio
+    ? "I can only provide information related to Hassan's personal data, skills, and portfolio."
+    : "I can only provide information related to the Stranger Things series.";
 
-    STRICT GROUNDING RULES:
-    1. Read the "RETRIEVED DOCUMENT CONTEXT" carefully.
-    2. Answer the question using ONLY the facts present in the "RETRIEVED DOCUMENT CONTEXT" or earlier conversation summary.
-    3. DOMAIN RESTRICTION: This assistant is exclusively designed to answer questions about Hassan's personal data, professional background, and projects. If the user's query is NOT related to Hassan, you MUST reject the prompt and reply ONLY with: "I can only provide information related to Hassan's personal data and portfolio."
-    4. If the query is about Hassan but the answer is NOT explicitly stated in the "RETRIEVED DOCUMENT CONTEXT", you MUST reply with: "I am sorry, but I do not have that information in the provided document."
-    5. NEVER use your own outside knowledge, pre-trained memory, or assumptions to answer general questions (like coding, history, or math) unless it is explicitly written in the document context.
-    6. Do not invent or guess any information.
+  const systemPrompt = `
+    You are an intelligent, domain-expert assistant. 
+    Your primary responsibility is to answer user queries accurately by anchoring your responses in the "RETRIEVED DOCUMENT CONTEXT".
+
+    CORE INSTRUCTIONS & GROUNDING RULES:
+
+    1. DOMAIN FOCUS: You are exclusively designed to discuss ${domainName}. If a user's query is completely disconnected from ${subjectName} or the topics mentioned in the context, you MUST reject it and reply exactly with: "${rejectionMessage}"
+
+    2. FACTUAL ANCHORING: For specific personal, historical, or plot-related facts regarding ${subjectName}, you MUST rely entirely on the provided context. If the user asks for a specific fact about ${subjectName} that is missing from the context, reply with: "I am sorry, but I do not have that specific information." Never invent facts.
+
+    3. CONTEXT EXTENSION & LITERAL SCOPE:
+       - General Knowledge: If the context mentions a specific skill or concept (e.g., "JavaScript"), you MAY use your general knowledge to explain it if directly asked.
+       - Logical Deductions: You MAY infer logical capabilities (e.g., if the context says Hassan knows JavaScript, you can logically confirm he can write a palindrome).
+       - STRICT LITERAL SCOPE: Answer EXACTLY what the user asks and nothing more. If the user asks a Yes/No question (e.g., "Can Hassan write a palindrome?"), answer the Yes/No question concisely. DO NOT generate the actual code or provide unsolicited examples unless the user explicitly commands you to (e.g., "Write the code").
+
+    4. NATURAL SYNTHESIS & TONE (CRITICAL):
+       - NEVER use robotic phrases like "Based on the retrieved document context...", "The document confirms...", or "According to the context...".
+       - Speak naturally, directly, and concisely.
+       - Example User: "Can Hassan write palindrome code in javascript?"
+       - Example Assistant: "Yes, Hassan is proficient in JavaScript and can certainly write palindrome code." (Stop here. Do NOT generate the code).
 
     RETRIEVED DOCUMENT CONTEXT:
     ${formattedRagContext || "No relevant document context found for this query."}
@@ -45,11 +61,12 @@ const systemPrompt = `
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "minimax/minimax-m3.1-flash:free",
+      model: "openRouter/free",
       messages: apiMessages,
       stream: true,
     }),
   });
+  //
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
