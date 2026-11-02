@@ -1,3 +1,5 @@
+// guardrails.js
+
 const BLOCKED_PHRASES = [
   // Violence / physical harm
   "how to kill someone",
@@ -38,6 +40,22 @@ const BLOCKED_PHRASES = [
   "how to steal someone's identity",
   "how to access someone's private account",
   "how to track someone without permission",
+
+  // ==========================================
+  // Prompt Injection & Jailbreak Attempts
+  // ==========================================
+  "ignore previous",
+  "ignore all previous",
+  "system prompt",
+  "repeat all text",
+  "repeat the text above",
+  "system diagnostic",
+  "developer mode",
+  "you are now a",
+  "override instructions",
+  "forget your previous",
+  "what are your instructions",
+  "reveal your instructions"
 ];
 
 export const validateInput = (message) => {
@@ -49,17 +67,14 @@ export const validateInput = (message) => {
     };
   }
 
-
   if (typeof message !== "string") {
     return {
       allowed: false,
       reason: "Message must be a string",
     };
   }
-
  
   const cleanMessage = message.trim();
-
   
   if (!cleanMessage) {
     return {
@@ -68,14 +83,12 @@ export const validateInput = (message) => {
     };
   }
 
-
   if (cleanMessage.length > 2000) {
     return {
       allowed: false,
       reason: "Message is too long",
     };
   }
-
 
   const lowerMessage = cleanMessage.toLowerCase();
 
@@ -86,10 +99,9 @@ export const validateInput = (message) => {
   if (containsBlockedWord) {
     return {
       allowed: false,
-      reason: "This message is not allowed",
+      reason: "This message is not allowed because it violates safety or system boundaries.",
     };
   }
-
 
   return {
     allowed: true,

@@ -1,3 +1,4 @@
+// rag.service.js
 import { pipeline, AutoTokenizer, AutoModelForSequenceClassification } from "@xenova/transformers";
 import Knowledge from "../models/knowledge.model.js";
 import { reciprocalRankFusion } from "../utils/rrf.js";
@@ -10,7 +11,8 @@ const EXPECTED_EMBEDDING_DIMENSIONS = 384;
 // Retrieval Configurations
 const VECTOR_INDEX_NAME = "vector_index";
 const TEXT_INDEX_NAME = "text_index";
-const NUM_CANDIDATES = 20;
+const NUM_CANDIDATES = 20; 
+const VECTOR_LIMIT = 10; // NEW: Separated limit for the Vector Search stage
 const FINAL_RESULT_LIMIT = 3;
 
 const ALLOWED_CATEGORIES = new Set(["portfolio_data", "stranger_things"]);
@@ -31,18 +33,14 @@ const getEmbedder = async () => {
 
 const getReranker = async () => {
   if (!rerankerTokenizerPromise || !rerankerModelPromise) {
-    rerankerTokenizerPromise = AutoTokenizer
-      .from_pretrained(RERANKER_MODEL);
-
-    rerankerModelPromise = AutoModelForSequenceClassification
-      .from_pretrained(RERANKER_MODEL, { dtype: "q8" });
+    rerankerTokenizerPromise = AutoTokenizer.from_pretrained(RERANKER_MODEL);
+    rerankerModelPromise = AutoModelForSequenceClassification.from_pretrained(RERANKER_MODEL, { dtype: "q8" });
 
     try {
       const [tokenizer, model] = await Promise.all([
         rerankerTokenizerPromise,
         rerankerModelPromise,
       ]);
-
       return { tokenizer, model };
     } catch (error) {
       rerankerTokenizerPromise = null;
@@ -111,7 +109,7 @@ export const retrieveRelevantContext = async (
               $eq: categoryFilter,
             },
           },
-          limit: NUM_CANDIDATES,
+          limit: VECTOR_LIMIT, // FIXED: Now using the dedicated VECTOR_LIMIT
         },
       },
       {
@@ -135,7 +133,7 @@ export const retrieveRelevantContext = async (
       {
         $match: { "metadata.category": categoryFilter },
       },
-      { $limit: NUM_CANDIDATES },
+      { $limit: VECTOR_LIMIT }, // FIXED: Match text search limit to vector search limit for balanced RRF
       {
         $project: {
           _id: 1,

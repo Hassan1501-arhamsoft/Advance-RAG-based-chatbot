@@ -122,7 +122,7 @@ export const chatController = async (req, res, next) => {
     let fullAiResponse = "";
 
     try {
-      const stream = askAI(recentMessages, conversation.summary ,ragContext , category);
+      const stream = askAI(recentMessages, conversation.summary ,ragContext , category, message);
 
       
       for await (const chunk of stream) {

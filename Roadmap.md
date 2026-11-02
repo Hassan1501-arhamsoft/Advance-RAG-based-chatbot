@@ -82,8 +82,6 @@
 ## 🔵 Phase 9 — Vector Database
 ## 🔵 Phase 10 — RAG ⭐⭐⭐
 ## 🔴 Phase 11 — Tool / Function Calling
-## 🔴 Phase 11 — Tool / Function Calling
-
 | #  | Topic                   | Status      |
 | -- | ----------------------- | ----------- |
 | 1  | AI API basics           | ✅          |

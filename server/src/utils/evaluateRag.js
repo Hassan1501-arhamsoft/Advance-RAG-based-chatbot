@@ -14,7 +14,7 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 /**
- * Universal Gemini fetcher with auto-retry for rate limits (429/503).
+- Universal Gemini fetcher with auto-retry for rate limits (429/503).
  */
 async function callGeminiAPI(prompt, isJsonMode = false, maxRetries = 3) {
   const config = { temperature: isJsonMode ? 0.0 : 0.1 };
@@ -52,7 +52,7 @@ async function callGeminiAPI(prompt, isJsonMode = false, maxRetries = 3) {
 }
 
 /**
- * Generates the chatbot answer.
+- Generates the chatbot answer.
  */
 async function generateAnswer(query, context) {
   const prompt = `Context:\n${context}\n\nQuestion: ${query}\nAnswer strictly based on the context.`;
@@ -66,7 +66,7 @@ async function generateAnswer(query, context) {
 }
 
 /**
- * Evaluates the response accuracy and faithfulness.
+- Evaluates the response accuracy and faithfulness.
  */
 async function evaluateRun(query, expected, generated, context) {
   const evalPrompt = `
@@ -77,7 +77,7 @@ async function evaluateRun(query, expected, generated, context) {
   Generated Answer: "${generated}"
   
   Evaluate on two metrics (Score 0.0 to 1.0):
-  1. context_recall: Does the 'Provided Context' contain the information needed to answer the query?
+1. context_recall: Does the 'Provided Context' contain the information needed to answer the query?
   2. faithfulness: Is the 'Generated Answer' derived strictly from the 'Provided Context' without hallucinating outside information?
 
   Respond ONLY with a valid JSON object matching this schema:
@@ -96,7 +96,7 @@ async function evaluateRun(query, expected, generated, context) {
 }
 
 /**
- * Main evaluation loop.
+- Main evaluation loop.
  */
 async function runEvaluation() {
   if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing from environment variables.");
@@ -111,7 +111,7 @@ async function runEvaluation() {
     let totalFaithfulness = 0;
 
     for (const [index, test] of testData.entries()) {
-      console.log(`\nEvaluating [${index + 1}/${testData.length}]: ${test.query}`);
+      console.log(`Evaluating [${index + 1}/${testData.length}]: ${test.query}`);
       const startTime = performance.now();
       
       // 1. Retrieval
@@ -123,8 +123,9 @@ async function runEvaluation() {
       const generatedAnswer = await generateAnswer(test.query, contextString);
       const scores = await evaluateRun(test.query, test.expected_answer, generatedAnswer, contextString);
       
-      totalRecall += scores.context_recall;
-      totalFaithfulness += scores.faithfulness;
+      // === FIX 2: Type Safety for Math Averages ===
+      totalRecall += Number(scores.context_recall) || 0;
+      totalFaithfulness += Number(scores.faithfulness) || 0;
 
       results.push({
         id: test.id,
@@ -135,20 +136,20 @@ async function runEvaluation() {
         generated_answer: generatedAnswer,
       });
 
-      console.log(`Recall: ${scores.context_recall} | Faithfulness: ${scores.faithfulness} | Latency: ${retrievalLatency}ms`);
+      console.log(`Recall: ${scores.context_recall} | Faithfulness: ${scores.faithfulness} | Latency: ${retrievalLatency}ms\n`);
 
       // Free tier rate limit protection
       if (index < testData.length - 1) await delay(4500);
     }
 
     const summary = {
-      average_recall: `${(totalRecall / testData.length)*100}%`,
-      average_faithfulness: `${(totalFaithfulness / testData.length)*100}%`,
+      average_recall: `${((totalRecall / testData.length) * 100).toFixed(2)}%`,
+      average_faithfulness: `${((totalFaithfulness / testData.length) * 100).toFixed(2)}%`,
       details: results
     };
 
     await fs.writeFile(OUTPUT_PATH, JSON.stringify(summary, null, 2));
-    console.log(`\nEvaluation Complete. Report saved to ${OUTPUT_PATH}`);
+    console.log(`Evaluation Complete. Report saved to ${OUTPUT_PATH}`);
     console.log(`Average Recall: ${summary.average_recall}`);
     console.log(`Average Faithfulness: ${summary.average_faithfulness}`);
 
